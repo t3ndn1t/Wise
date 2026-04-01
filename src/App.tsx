@@ -66,7 +66,7 @@ const Navbar = ({ user, onLogin, onLogout }: { user: User | null, onLogin: () =>
         <div className="flex items-center gap-3">
           <img 
             src="/Wise.png" 
-            alt="Wise Company Logo" 
+            alt="Wise Assessoria Logo" 
             className="h-12 w-auto object-contain"
             referrerPolicy="no-referrer"
           />
@@ -269,7 +269,7 @@ const Methodology = () => {
     <section id="methodology" className="py-24 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-orange-500 font-bold uppercase tracking-widest text-sm mb-4">Metodologia Wise Company</h2>
+          <h2 className="text-orange-500 font-bold uppercase tracking-widest text-sm mb-4">Metodologia Wise Assessoria</h2>
           <h3 className="text-4xl md:text-5xl font-black text-white mb-6">Como impulsionamos seu negócio</h3>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg">
             Receba um plano de ação claro e estratégico, criado especialmente para que sua empresa possa escalar cada vez mais.
@@ -309,7 +309,7 @@ const Methodology = () => {
               <div className="absolute inset-0 bg-orange-500/20 blur-[120px] rounded-full" />
               <img 
                 src="/Gemini_Generated_Image_dcda0rdcda0rdcda.png" 
-                alt="Metodologia Wise Company Cycle" 
+                alt="Metodologia Wise Assessoria Cycle" 
                 className="relative z-10 w-full max-w-lg mx-auto drop-shadow-[0_0_50px_rgba(249,115,22,0.3)]"
                 referrerPolicy="no-referrer"
               />
@@ -323,9 +323,9 @@ const Methodology = () => {
 
 const Results = () => {
   const results = [
-    { label: "Investimento Gerenciado", value: "R$ 5M+" },
-    { label: "Leads Qualificados", value: "150k+" },
-    { label: "Empresas Atendidas", value: "100+" },
+    { label: "Investimento Gerenciado", value: "R$ 800k+" },
+    { label: "Leads Qualificados", value: "100k+" },
+    { label: "Empresas Atendidas", value: "55+" },
     { label: "Crescimento Médio", value: "250%" }
   ];
 
@@ -354,7 +354,7 @@ const About = () => {
             <div className="absolute -top-20 -left-20 w-64 h-64 bg-orange-500/20 blur-[100px] rounded-full" />
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
-                Na <span className="text-orange-500">Wise Company</span>, vivemos aquilo que ensinamos.
+                Na <span className="text-orange-500">Wise Assessoria</span>, vivemos aquilo que ensinamos.
               </h2>
               <p className="text-gray-400 text-lg mb-8 leading-relaxed">
                 Somos especialistas em impulsionar, educar e acelerar empresas, unindo estratégias de marketing digital, tráfego pago e estruturação de processos de vendas para gerar crescimento real.
@@ -378,7 +378,7 @@ const About = () => {
             <div className="aspect-square rounded-3xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 border border-white/10">
               <img 
                 src="/WiseV.jpg" 
-                alt="Wise Company Team" 
+                alt="Wise Assessoria Team" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -422,7 +422,7 @@ const SelfAssessment = () => {
         </div>
         <div className="p-8 rounded-3xl bg-orange-500/10 border border-orange-500/20">
           <p className="text-white font-bold text-lg mb-4">
-            Se você se identificou com pelo menos 3 alternativas, a Wise Company está pronta para levar sua empresa ao próximo nível.
+            Se você se identificou com pelo menos 3 alternativas, a Wise Assessoria está pronta para levar sua empresa ao próximo nível.
           </p>
           <a href="#contact" className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold transition-all">
             Solicitar Diagnóstico Gratuito <ArrowRight className="w-5 h-5" />
@@ -654,13 +654,13 @@ const Footer = () => {
         <div className="flex items-center gap-3">
           <img 
             src="/Wise.png" 
-            alt="Wise Company Logo" 
+            alt="Wise Assessoria Logo" 
             className="h-10 w-auto object-contain"
             referrerPolicy="no-referrer"
           />
         </div>
         <div className="text-gray-500 text-sm">
-          © {new Date().getFullYear()} Wise Company. Todos os direitos reservados.
+          © {new Date().getFullYear()} Wise Assessoria. Todos os direitos reservados.
         </div>
         <div className="flex gap-6">
           {['Instagram', 'LinkedIn', 'YouTube'].map(social => (
