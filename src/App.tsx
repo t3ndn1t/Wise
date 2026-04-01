@@ -477,15 +477,21 @@ const Contact = () => {
       });
 
       // 2. Send Email via Backend
-      const emailResponse = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      let emailResponse;
+      try {
+        emailResponse = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      } catch (fetchErr) {
+        throw new Error('Erro de conexão: Não foi possível conectar ao servidor. Verifique sua internet.');
+      }
 
       if (!emailResponse.ok) {
         const errorData = await emailResponse.json();
-        throw new Error(errorData.details || 'Failed to send email');
+        // Use the user-friendly 'error' message from the server if available
+        throw new Error(errorData.error || errorData.details || 'Falha ao enviar e-mail.');
       }
 
       setStatus('success');
@@ -495,7 +501,7 @@ const Contact = () => {
     } catch (err: any) {
       console.error('Contact form submission error:', err);
       setStatus('error');
-      setErrorMessage(err.message || 'Ocorreu um erro. Tente novamente.');
+      setErrorMessage(err.message || 'Ocorreu um erro inesperado. Tente novamente.');
     }
   };
 
@@ -602,7 +608,7 @@ const Contact = () => {
               </button>
               {status === 'error' && (
                 <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                  <p className="text-red-500 text-sm text-center font-medium">{errorMessage}</p>
+                  <p className="text-red-500 text-sm text-center font-medium whitespace-pre-wrap">{errorMessage}</p>
                 </div>
               )}
             </form>
