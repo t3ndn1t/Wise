@@ -673,9 +673,13 @@ const Footer = () => {
         <div className="text-gray-500 text-sm">
           © {new Date().getFullYear()} Wise Assessoria. Todos os direitos reservados.
         </div>
-        <div className="flex gap-6">
+        <div className="flex gap-8 items-center">
           {[
-            { name: 'Instagram', href: 'https://www.instagram.com/wiseassessoria_?igsh=MWRtdzdmZXplbWUxcQ==' },
+            { 
+              name: 'Instagram', 
+              href: 'https://www.instagram.com/wiseassessoria_?igsh=MWRtdzdmZXplbWUxcQ==',
+              icon: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.ciafoodies.com%2Fwp-content%2Fthemes%2Ffoodica-child%2Fimages%2Finstagram-orange.png&f=1&nofb=1&ipt=9e9fb284beaf1cc92d45e283fd41a1398d8aa88729eb888b29e5651381651ee1'
+            },
             { name: 'LinkedIn', href: '#' },
             { name: 'YouTube', href: '#' }
           ].map(social => (
@@ -684,9 +688,17 @@ const Footer = () => {
               href={social.href} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-orange-500 transition-colors text-sm font-medium"
+              className="group flex flex-col items-center gap-2 text-gray-500 hover:text-orange-500 transition-colors text-sm font-medium"
             >
-              {social.name}
+              {social.icon && (
+                <img 
+                  src={social.icon} 
+                  alt={`${social.name} Icon`} 
+                  className="w-8 h-8 object-contain opacity-60 group-hover:opacity-100 transition-all transform group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              <span>{social.name}</span>
             </a>
           ))}
         </div>
