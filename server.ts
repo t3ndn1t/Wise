@@ -14,48 +14,49 @@ async function startServer() {
 
   // API Route for Contact Form Email
   app.post("/api/contact", async (req, res) => {
+    console.log("Contact form request received:", req.body);
     const { name, email, phone, message } = req.body;
 
-    // Configure your email transport here
-    // For Gmail, you'd typically use an App Password
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error("CRITICAL: EMAIL_USER or EMAIL_PASS environment variables are missing.");
+      return res.status(500).json({ error: "Server configuration error: Email credentials missing." });
+    }
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER, // e.g., wiseassessoriademarketing@gmail.com
-        pass: process.env.EMAIL_PASS  // App Password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"${name}" <${process.env.EMAIL_USER}>`,
       to: 'wiseassessoriademarketing@gmail.com',
-      subject: `Novo Lead: ${name}`,
-      text: `
-        Nome: ${name}
-        E-mail: ${email}
-        Telefone: ${phone}
-        Mensagem: ${message}
-      `,
+      replyTo: email,
+      subject: name, // User requested name on the title
+      text: message, // User requested description as the body
       html: `
-        <h3>Novo Lead Capturado</h3>
-        <p><strong>Nome:</strong> ${name}</p>
-        <p><strong>E-mail:</strong> ${email}</p>
-        <p><strong>Telefone:</strong> ${phone}</p>
-        <p><strong>Mensagem:</strong> ${message}</p>
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #f97316;">Nova Mensagem de Contato</h2>
+          <p><strong>Nome:</strong> ${name}</p>
+          <p><strong>E-mail:</strong> ${email}</p>
+          <p><strong>Telefone:</strong> ${phone}</p>
+          <hr style="border: 1px solid #eee; margin: 20px 0;" />
+          <p><strong>Mensagem:</strong></p>
+          <p style="white-space: pre-wrap;">${message}</p>
+        </div>
       `
     };
 
     try {
-      if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.warn("Email credentials not set. Skipping email send.");
-        return res.status(200).json({ message: "Lead saved (email skipped due to missing config)" });
-      }
-
+      console.log("Attempting to send email...");
       await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully to wiseassessoriademarketing@gmail.com");
       res.status(200).json({ message: "Email sent successfully" });
     } catch (error) {
-      console.error("Error sending email:", error);
-      res.status(500).json({ error: "Failed to send email" });
+      console.error("Nodemailer Error:", error);
+      res.status(500).json({ error: "Failed to send email", details: error instanceof Error ? error.message : String(error) });
     }
   });
 

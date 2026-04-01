@@ -436,11 +436,38 @@ const SelfAssessment = () => {
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Client-side validation
+    if (!formData.name.trim()) {
+      setStatus('error');
+      setErrorMessage('Por favor, insira seu nome completo.');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      setStatus('error');
+      setErrorMessage('Por favor, insira seu e-mail.');
+      return;
+    } else if (!emailRegex.test(formData.email)) {
+      setStatus('error');
+      setErrorMessage('Por favor, insira um e-mail válido.');
+      return;
+    }
+    
+    if (!formData.message.trim()) {
+      setStatus('error');
+      setErrorMessage('Por favor, descreva como podemos ajudar.');
+      return;
+    }
+
     setStatus('loading');
+    setErrorMessage('');
     try {
       // 1. Save to Firestore
       await addDoc(collection(db, 'leads'), {
@@ -450,16 +477,15 @@ const Contact = () => {
       });
 
       // 2. Send Email via Backend
-      try {
-        await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-      } catch (emailErr) {
-        console.error('Email sending failed:', emailErr);
-        // We don't fail the whole submission if just the email fails, 
-        // but we log it.
+      const emailResponse = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!emailResponse.ok) {
+        const errorData = await emailResponse.json();
+        throw new Error(errorData.details || 'Failed to send email');
       }
 
       setStatus('success');
@@ -469,6 +495,7 @@ const Contact = () => {
     } catch (err: any) {
       console.error('Contact form submission error:', err);
       setStatus('error');
+      setErrorMessage(err.message || 'Ocorreu um erro. Tente novamente.');
     }
   };
 
@@ -520,7 +547,7 @@ const Contact = () => {
             viewport={{ once: true }}
             className="bg-black p-8 md:p-12 rounded-3xl border border-white/10 shadow-2xl"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <div>
                 <label className="block text-white text-sm font-bold mb-2">Nome Completo</label>
                 <input 
@@ -573,7 +600,11 @@ const Contact = () => {
                 {status === 'loading' ? 'Enviando...' : status === 'success' ? 'Mensagem Enviada!' : 'Solicitar Plano de Ação'}
                 <Rocket className="w-5 h-5" />
               </button>
-              {status === 'error' && <p className="text-red-500 text-sm text-center">Ocorreu um erro. Tente novamente.</p>}
+              {status === 'error' && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <p className="text-red-500 text-sm text-center font-medium">{errorMessage}</p>
+                </div>
+              )}
             </form>
           </motion.div>
         </div>
