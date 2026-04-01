@@ -199,21 +199,6 @@ const Hero = () => {
   );
 };
 
-const TrustedBy = () => {
-  return (
-    <section className="py-12 bg-black border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
-        <p className="text-center text-gray-500 text-xs font-bold uppercase tracking-widest mb-8">Nossos resultados falam por nós</p>
-        <div className="flex flex-wrap justify-center items-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all">
-          {["Empresa A", "Empresa B", "Empresa C", "Empresa D", "Empresa E"].map((name, i) => (
-            <span key={i} className="text-2xl font-black text-white">{name}</span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 const Process = () => {
   const steps = [
     {
@@ -451,17 +436,34 @@ const SelfAssessment = () => {
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
     try {
+      // 1. Save to Firestore
       await addDoc(collection(db, 'leads'), {
         ...formData,
         createdAt: serverTimestamp(),
         uid: auth.currentUser?.uid || null
       });
+
+      // 2. Send Email via Backend
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+      } catch (emailErr) {
+        console.error('Email sending failed:', emailErr);
+        // We don't fail the whole submission if just the email fails, 
+        // but we log it.
+      }
+
       setStatus('success');
+      setShowModal(true);
       setFormData({ name: '', email: '', phone: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err: any) {
@@ -488,7 +490,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="text-white font-bold mb-1">E-mail</div>
-                  <div className="text-gray-400">contato@wisecompany.com.br</div>
+                  <div className="text-gray-400">wiseassessoriademarketing@gmail.com</div>
                 </div>
               </div>
               <div className="flex items-start gap-6">
@@ -497,7 +499,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="text-white font-bold mb-1">Telefone</div>
-                  <div className="text-gray-400">+55 (11) 99999-9999</div>
+                  <div className="text-gray-400">+55 (11) 99815-4346</div>
                 </div>
               </div>
               <div className="flex items-start gap-6">
@@ -576,6 +578,34 @@ const Contact = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-zinc-900 border border-white/10 p-8 rounded-3xl max-w-md w-full text-center shadow-2xl"
+            >
+              <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center text-orange-500 mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-4">Mensagem Recebida!</h3>
+              <p className="text-gray-400 mb-8 leading-relaxed">
+                Obrigado pelo seu interesse. Nossa equipe analisará suas informações e entrará em contato em breve com seu plano de ação estratégico.
+              </p>
+              <button 
+                onClick={() => setShowModal(false)}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition-all"
+              >
+                Entendido
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
@@ -640,7 +670,6 @@ export default function App() {
       
       <main>
         <Hero />
-        <TrustedBy />
         <Results />
         <Process />
         <Methodology />
