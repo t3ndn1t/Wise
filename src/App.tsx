@@ -469,12 +469,21 @@ const Contact = () => {
     setStatus('loading');
     setErrorMessage('');
     try {
+      console.log('Starting form submission...');
+      
       // 1. Save to Firestore
-      await addDoc(collection(db, 'leads'), {
-        ...formData,
-        createdAt: serverTimestamp(),
-        uid: auth.currentUser?.uid || null
-      });
+      try {
+        const leadsRef = collection(db, 'leads');
+        await addDoc(leadsRef, {
+          ...formData,
+          createdAt: serverTimestamp(),
+          uid: auth.currentUser?.uid || 'anonymous'
+        });
+        console.log('Successfully saved to Firestore');
+      } catch (dbErr: any) {
+        console.error('Firestore save error:', dbErr);
+        // We continue even if Firestore fails, to try sending the email
+      }
 
       // 2. Send Email via Backend
       let emailResponse;
@@ -485,15 +494,17 @@ const Contact = () => {
           body: JSON.stringify(formData)
         });
       } catch (fetchErr) {
+        console.error('Fetch error:', fetchErr);
         throw new Error('Erro de conexão: Não foi possível conectar ao servidor. Verifique sua internet.');
       }
 
       if (!emailResponse.ok) {
         const errorData = await emailResponse.json();
-        // Use the user-friendly 'error' message from the server if available
+        console.error('Server error response:', errorData);
         throw new Error(errorData.error || errorData.details || 'Falha ao enviar e-mail.');
       }
 
+      console.log('Form submission successful');
       setStatus('success');
       setShowModal(true);
       setFormData({ name: '', email: '', phone: '', message: '' });
@@ -663,9 +674,19 @@ const Footer = () => {
           © {new Date().getFullYear()} Wise Assessoria. Todos os direitos reservados.
         </div>
         <div className="flex gap-6">
-          {['Instagram', 'LinkedIn', 'YouTube'].map(social => (
-            <a key={social} href="#" className="text-gray-500 hover:text-orange-500 transition-colors text-sm font-medium">
-              {social}
+          {[
+            { name: 'Instagram', href: 'https://www.instagram.com/wiseassessoria_?igsh=MWRtdzdmZXplbWUxcQ==' },
+            { name: 'LinkedIn', href: '#' },
+            { name: 'YouTube', href: '#' }
+          ].map(social => (
+            <a 
+              key={social.name} 
+              href={social.href} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-orange-500 transition-colors text-sm font-medium"
+            >
+              {social.name}
             </a>
           ))}
         </div>
