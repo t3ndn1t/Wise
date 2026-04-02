@@ -473,7 +473,7 @@ const WebDevelopment = () => {
           >
             <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <img 
-                src="https://picsum.photos/seed/webdev/800/600" 
+                src="/WiseW.jpeg" 
                 alt="Web Development" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
