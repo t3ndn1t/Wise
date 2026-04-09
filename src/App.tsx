@@ -22,6 +22,7 @@ import {
   Rocket,
   Search
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import { auth, db } from './firebase';
 import { 
   signInWithPopup, 
@@ -843,6 +844,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <Analytics />
     </div>
   );
 }
